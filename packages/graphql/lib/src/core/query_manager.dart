@@ -495,7 +495,7 @@ class QueryManager {
   ) =>
       cachedData != null &&
       query.latestResult != null &&
-      (alwaysRebroadcast || !_deepEquals(query.latestResult!.data, cachedData));
+      (alwaysRebroadcast || !query.options.compareFn(query.latestResult!.data, cachedData));
 
   void setQuery(ObservableQuery<Object?> observableQuery) {
     queries[observableQuery.queryId] = observableQuery;
