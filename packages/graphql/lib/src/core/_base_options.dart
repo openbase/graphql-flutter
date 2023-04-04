@@ -5,9 +5,22 @@ import 'package:graphql/client.dart';
 import 'package:graphql/src/core/result_parser.dart';
 import 'package:meta/meta.dart';
 
+typedef Comparator = bool Function(Map<String, dynamic>? latest, Map<String, dynamic> cached);
+
 TParsed unprovidedParserFn<TParsed>(_d) => throw UnimplementedError(
       "Please provide a parser function to support result parsing.",
     );
+
+bool Function(dynamic a, dynamic b) _deepEquals =
+    const DeepCollectionEquality().equals;
+
+Comparator buildCompareFn<TParsed>(bool compareParsed, ResultParserFn<TParsed>? parserFn) {
+  if (parserFn == null) {
+    return _deepEquals;
+  }
+
+  return (Map<String, dynamic>? latest, Map<String, dynamic> cached) => latest != null && parserFn(latest) == parserFn(cached);
+}
 
 /// TODO refactor into [Request] container
 /// Base options.
@@ -23,13 +36,17 @@ abstract class BaseOptions<TParsed extends Object?> {
     ErrorPolicy? errorPolicy,
     CacheRereadPolicy? cacheRereadPolicy,
     this.optimisticResult,
+    Comparator? compareFn,
+    this.compareParsed = false,
   })  : policies = Policies(
           fetch: fetchPolicy,
           error: errorPolicy,
           cacheReread: cacheRereadPolicy,
         ),
         context = context ?? Context(),
-        parserFn = parserFn ?? unprovidedParserFn;
+        parserFn = parserFn ?? unprovidedParserFn,
+        compareFn = compareFn ?? buildCompareFn<TParsed>(compareParsed, parserFn)
+  ;
 
   /// Document containing at least one [OperationDefinitionNode]
   final DocumentNode document;
@@ -59,6 +76,15 @@ abstract class BaseOptions<TParsed extends Object?> {
   final Context context;
 
   final ResultParserFn<TParsed> parserFn;
+
+  /// Provide a custom comparator to test if a new value deviates from the cached
+  /// value.
+  /// This can be used to speed up comparison through knowledge about your queries.
+  final Comparator compareFn;
+
+  /// Generate a [compareFn] from the given [parserFn] by comparing the parsed
+  /// types.
+  final bool compareParsed;
 
   // TODO consider inverting this relationship
   /// Resolve these options into a request
