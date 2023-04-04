@@ -29,6 +29,8 @@ class QueryOptions<TParsed extends Object?> extends BaseOptions<TParsed> {
     ResultParserFn<TParsed>? parserFn,
     this.onComplete,
     this.onError,
+    Comparator? compareFn,
+    bool compareParsed = false,
   }) : super(
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
@@ -39,6 +41,8 @@ class QueryOptions<TParsed extends Object?> extends BaseOptions<TParsed> {
           context: context,
           optimisticResult: optimisticResult,
           parserFn: parserFn,
+          compareFn: compareFn,
+          compareParsed: compareParsed,
         );
 
   final OnQueryComplete? onComplete;
@@ -65,6 +69,8 @@ class QueryOptions<TParsed extends Object?> extends BaseOptions<TParsed> {
         errorPolicy: errorPolicy,
         parserFn: parserFn,
         context: context,
+        compareFn: compareFn,
+        compareParsed: compareParsed,
         variables: {
           ...variables,
           ...fetchMoreOptions.variables,
@@ -73,7 +79,7 @@ class QueryOptions<TParsed extends Object?> extends BaseOptions<TParsed> {
 
   WatchQueryOptions<TParsed> asWatchQueryOptions({bool fetchResults = true}) =>
       WatchQueryOptions(
-        document: document,
+        document: this.document,
         operationName: operationName,
         variables: variables,
         fetchPolicy: fetchPolicy,
@@ -84,6 +90,8 @@ class QueryOptions<TParsed extends Object?> extends BaseOptions<TParsed> {
         context: context,
         optimisticResult: optimisticResult,
         parserFn: parserFn,
+        compareFn: compareFn,
+        compareParsed: compareParsed,
       );
 
   QueryOptions<TParsed> copyWithPolicies(Policies policies) => QueryOptions(
@@ -97,6 +105,8 @@ class QueryOptions<TParsed extends Object?> extends BaseOptions<TParsed> {
         pollInterval: pollInterval,
         context: context,
         parserFn: parserFn,
+        compareFn: compareFn,
+        compareParsed: compareParsed,
       );
 }
 
@@ -113,6 +123,8 @@ class SubscriptionOptions<TParsed extends Object?>
     Object? optimisticResult,
     Context? context,
     ResultParserFn<TParsed>? parserFn,
+    Comparator? compareFn,
+    bool compareParsed = false,
   }) : super(
           fetchPolicy: fetchPolicy,
           errorPolicy: errorPolicy,
@@ -123,6 +135,8 @@ class SubscriptionOptions<TParsed extends Object?>
           context: context,
           optimisticResult: optimisticResult,
           parserFn: parserFn,
+          compareFn: compareFn,
+          compareParsed: compareParsed,
         );
   SubscriptionOptions<TParsed> copyWithPolicies(Policies policies) =>
       SubscriptionOptions(
@@ -135,6 +149,8 @@ class SubscriptionOptions<TParsed extends Object?>
         optimisticResult: optimisticResult,
         context: context,
         parserFn: parserFn,
+        compareFn: compareFn,
+        compareParsed: compareParsed,
       );
 }
 
@@ -154,6 +170,8 @@ class WatchQueryOptions<TParsed extends Object?> extends QueryOptions<TParsed> {
     bool? eagerlyFetchResults,
     Context? context,
     ResultParserFn<TParsed>? parserFn,
+    Comparator? compareFn,
+    bool compareParsed = false,
   })  : eagerlyFetchResults = eagerlyFetchResults ?? fetchResults,
         super(
           document: document,
@@ -166,6 +184,8 @@ class WatchQueryOptions<TParsed extends Object?> extends QueryOptions<TParsed> {
           context: context,
           optimisticResult: optimisticResult,
           parserFn: parserFn,
+          compareFn: compareFn,
+          compareParsed: compareParsed,
         );
 
   /// Whether or not to fetch results
@@ -204,6 +224,8 @@ class WatchQueryOptions<TParsed extends Object?> extends QueryOptions<TParsed> {
         carryForwardDataOnException: carryForwardDataOnException,
         context: context,
         parserFn: parserFn,
+        compareFn: compareFn,
+        compareParsed: compareParsed,
       );
   WatchQueryOptions<TParsed> copyWithPolicies(
     Policies policies,
@@ -222,6 +244,8 @@ class WatchQueryOptions<TParsed extends Object?> extends QueryOptions<TParsed> {
         carryForwardDataOnException: carryForwardDataOnException,
         context: context,
         parserFn: parserFn,
+        compareFn: compareFn,
+        compareParsed: compareParsed,
       );
 
   WatchQueryOptions<TParsed> copyWithPollInterval(Duration? pollInterval) =>
@@ -239,6 +263,8 @@ class WatchQueryOptions<TParsed extends Object?> extends QueryOptions<TParsed> {
         carryForwardDataOnException: carryForwardDataOnException,
         context: context,
         parserFn: parserFn,
+        compareFn: compareFn,
+        compareParsed: compareParsed,
       );
 
   WatchQueryOptions<TParsed> copyWithVariables(
@@ -257,6 +283,8 @@ class WatchQueryOptions<TParsed extends Object?> extends QueryOptions<TParsed> {
         carryForwardDataOnException: carryForwardDataOnException,
         context: context,
         parserFn: parserFn,
+        compareFn: compareFn,
+        compareParsed: compareParsed,
       );
 
   WatchQueryOptions<TParsed> copyWithOptimisticResult(
@@ -275,6 +303,8 @@ class WatchQueryOptions<TParsed extends Object?> extends QueryOptions<TParsed> {
         carryForwardDataOnException: carryForwardDataOnException,
         context: context,
         parserFn: parserFn,
+        compareFn: compareFn,
+        compareParsed: compareParsed,
       );
 }
 
